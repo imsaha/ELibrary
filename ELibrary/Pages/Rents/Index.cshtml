@@ -1,0 +1,73 @@
+﻿@page
+@model ELibrary.Pages.Rents.IndexModel
+@{
+}
+
+@if (TempData["Deleted"] != null && TempData["Deleted"].ToString().ToLower() == "true")
+{
+    <div class="alert alert-danger">
+        <p class="text-danger">
+            Rent is successfully deleted.
+        </p>
+    </div>
+}
+
+
+<h3>Rents</h3>
+
+
+
+
+<a asp-page="NewRent">Initiate new rent</a>
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Book</th>
+            <th>Tenant</th>
+            <th>Starts on</th>
+            <th>Expected return</th>
+            <th></th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @if (Model.ActiveRents != null)
+        {
+            foreach (var item in Model.ActiveRents)
+            {
+                <tr>
+                    <td>
+                        <p style="max-width:200px" class="m-0">
+                            @item.BookTitle
+                        </p>
+                    </td>
+                    <td>
+                        <p class="m-0">@item.TenantName</p>
+                        <p class="m-0">
+                            <span class="badge badge-secondary badge-pill">
+                                @item.TenantMobile
+                            </span>
+                        </p>
+                    </td>
+                    <td>@item.StartDate.ToFormatedDate()</td>
+                    <td>@item.ScheduledReturnDate.ToFormatedDate()</td>
+                    <td>
+                        <a>Return</a>
+                        |
+                        <a>Delete</a>
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="5">
+                    <p>Initiate new rent, to see any active rent.</p>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,12 @@
+﻿@inject MediatR.IMediator _mediatr
+
+@{
+    var supportedLanguagesResult = await _mediatr.Send(new ELibrary.Application.Operations.Queries.GetSupportedLanguagesByOperationCountryQuery());
+    var supportedLanguages = new SelectList(supportedLanguagesResult.Data, "Code", "Name", CultureHelper.CurrentCultureCode);
+}
+
+<select id="change_language"
+        style="max-width:150px;"
+        asp-items="supportedLanguages"
+        data-url="@Url.Page("/ChangeLanguage")"
+        class="form-control custom-select"></select>

@@ -1,0 +1,67 @@
+﻿@page
+@model ELibrary.Pages.Rents.NewRentModel
+@{
+}
+
+<h3>Initiating new rent</h3>
+
+<a asp-page="/Rents/Index">Active rents</a>
+
+<div class="row">
+    <div class="col-md-8">
+        <form method="post">
+
+            <div class="form-group">
+                <label asp-for="Command.BookId">Book</label>
+                <select asp-for="Command.BookId" asp-items="await Model.GetBooksMiniAsync()" class="form-control custom-select">
+                    <option>--Select--</option>
+                </select>
+                <span asp-validation-for="Command.BookId" class="text-danger"></span>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="Command.StartDate"></label>
+                        <input asp-for="Command.StartDate" class="form-control" type="date" />
+                        <span asp-validation-for="Command.StartDate" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="Command.ScheduledReturnDate"></label>
+                        <input asp-for="Command.ScheduledReturnDate" class="form-control" type="date" />
+                        <span asp-validation-for="Command.ScheduledReturnDate" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="Command.TenantName"></label>
+                        <input asp-for="Command.TenantName" class="form-control" placeholder="Tenant name" />
+                        <span asp-validation-for="Command.TenantName" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="Command.TenantMobile"></label>
+                        <input asp-for="Command.TenantMobile" class="form-control" placeholder="Tenant mobile number" />
+                        <span asp-validation-for="Command.TenantMobile" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <button class="btn btn-success">
+                    Save
+                </button>
+            </div>
+
+
+
+        </form>
+    </div>
+    <div class="col-md-4"></div>
+</div>

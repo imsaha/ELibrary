@@ -1,0 +1,64 @@
+﻿{
+  "version": "1.0",
+  "defaultProvider": "cdnjs",
+  "libraries": [
+    {
+      "library": "twitter-bootstrap@4.5.3",
+      "destination": "wwwroot/lib/bootstrap/",
+      "files": [
+        "css/bootstrap.min.css",
+        "css/bootstrap.min.css.map",
+        "css/bootstrap-grid.min.css",
+        "css/bootstrap-grid.min.css.map",
+        "css/bootstrap-reboot.min.css",
+        "css/bootstrap-reboot.min.css.map",
+        "js/bootstrap.min.js",
+        "js/bootstrap.min.js.map",
+        "js/bootstrap.bundle.min.js",
+        "js/bootstrap.bundle.min.js.map"
+      ]
+    },
+    {
+      "library": "bootstrap-v4-rtl@4.6.0-1",
+      "destination": "wwwroot/lib/bootstrap-rtl/",
+      "files": [ "css/bootstrap-rtl.min.css", "css/bootstrap-rtl.css.map" ]
+    },
+    {
+      "library": "jquery@3.5.1",
+      "destination": "wwwroot/lib/jquery/",
+      "files": [
+        "jquery.min.js",
+        "jquery.min.map"
+      ]
+    },
+    {
+      "library": "jquery-validate@1.19.2",
+      "destination": "wwwroot/lib/jquery-validation/",
+      "files": [
+        "jquery.validate.min.js",
+        "additional-methods.min.js"
+      ]
+    },
+    {
+      "library": "jquery-validation-unobtrusive@3.2.11",
+      "destination": "wwwroot/lib/jquery-validation-unobtrusive/",
+      "files": [
+        "jquery.validate.unobtrusive.min.js"
+      ]
+    },
+    {
+      "provider": "unpkg",
+      "library": "fortawesome-light@1.0.3",
+      "destination": "wwwroot/lib/fontawesome/",
+      "files": [
+        "fontawesome-free/css/fontawesome.min.css",
+        "fontawesome-free/js/fontawesome.min.js",
+        "fontawesome-free/css/all.min.css",
+        "fontawesome-free/js/all.min.js",
+        "fontawesome-free/webfonts/fa-solid-900.woff2",
+        "fontawesome-free/webfonts/fa-solid-900.woff",
+        "fontawesome-free/webfonts/fa-solid-900.ttf"
+      ]
+    }
+  ]
+}

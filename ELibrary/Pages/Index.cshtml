@@ -1,0 +1,10 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = _localizer["Home page"];
+}
+
+<div class="text-center">
+    <h1 class="display-4">@_localizer["Welcome"]</h1>
+    <p>@_localizer["Welcome to ELibrary dashboard"] <a asp-page="/Rents/NewRent">@_localizer["Click here"]</a> @_localizer["to start renting"].</p>
+</div>

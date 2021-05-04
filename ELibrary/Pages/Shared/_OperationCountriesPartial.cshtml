@@ -1,0 +1,16 @@
+﻿@inject MediatR.IMediator _mediatr
+
+@{
+    var operationCountriesResult = await _mediatr.Send(new ELibrary.Application.Operations.Queries.GetOperationCountriesQuery());
+
+    var activeOperationCountryId = Context.Request.Cookies["opc_id"]?.ToString();
+    var currentOperationCountryId = string.IsNullOrEmpty(activeOperationCountryId) ?
+        operationCountriesResult.Data.FirstOrDefault().Id : long.Parse(activeOperationCountryId);
+
+    var operationCountries = new SelectList(operationCountriesResult.Data, "Id", "Name", currentOperationCountryId);
+}
+
+<select id="change_operation_country_id"
+        asp-items="operationCountries"
+        data-url="@Url.Page("/ChangeOperationCountry")"
+        class="form-control custom-select"></select>
