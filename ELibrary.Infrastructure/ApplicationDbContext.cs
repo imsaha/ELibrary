@@ -1,11 +1,13 @@
 ﻿using ELibrary.Application;
 using ELibrary.Domain.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
 
 namespace ELibrary.Infrastructure
 {
-    public class ApplicationDbContext : DbContext, IDataContext
+    public class ApplicationDbContext : IdentityDbContext<IdentityUser<long>, IdentityRole<long>, long>, IDataContext
     {
         public ApplicationDbContext(DbContextOptions options) : base(options)
         {
@@ -175,6 +177,21 @@ namespace ELibrary.Infrastructure
                     SupportedLanaguageId = 2,
                 });
 
+
+            modelBuilder.Entity<IdentityRole<long>>()
+                .HasData(
+                new IdentityRole<long>
+                {
+                    Id = 1,
+                    Name = "admin",
+                    NormalizedName = "ADMIN"
+                },
+                new IdentityRole<long>
+                {
+                    Id = 2,
+                    Name = "user",
+                    NormalizedName = "USER"
+                });
         }
     }
 }

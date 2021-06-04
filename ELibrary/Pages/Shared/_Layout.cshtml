@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - ELibrary</title>
+    <title>@ViewData["Title"] - @_localizer["ELibrary"]</title>
 
 
     @if (CultureHelper.IsRightToLeft)
@@ -31,25 +31,34 @@
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Rents/Index">Rents</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Books/Index">Books</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Tenants/Index">Tenants</a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a class="btn btn-outline-secondary text-dark" asp-area="" asp-page="/Tenants/Index">Return books</a>
-                        </li>
-
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-page="/Rents/Index">Rents</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-page="/Books/Index">Books</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-page="/Tenants/Index">Tenants</a>
+                            </li>
+                            @if (User.IsInRole("admin"))
+                            {
+                                <li class="nav-item">
+                                    <a class="btn btn-outline-secondary text-dark" asp-area="" asp-page="/Tenants/Index">Return</a>
+                                </li>
+                            }
+                        }
                     </ul>
 
                     <ul class="navbar-nav">
                         <li class="nav-item">
                             <partial name="_OperationCountriesPartial" />
+                        </li>
+                        <li class="nav-item">
+                            <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("/", new { area = "" })" method="post">
+                                <button type="submit" class="nav-link btn btn-link text-dark">@_localizer["Logout"]</button>
+                            </form>
                         </li>
                     </ul>
                 </div>

@@ -1,15 +1,18 @@
 ﻿using Askmethat.Aspnet.JsonLocalizer.Extensions;
 using Askmethat.Aspnet.JsonLocalizer.JsonOptions;
 using ELibrary.Application;
+using ELibrary.Infrastructure;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
@@ -31,19 +34,74 @@ namespace ELibrary
         {
             services.AddHttpContextAccessor();
             services.AddTransient<IAppContext, AppContext>();
-
-            services.AddRazorPages()
-                .AddFluentValidation(fv =>
-                {
-                    fv.LocalizationEnabled = true;
-                    fv.RegisterValidatorsFromAssemblies(new[] {
-                        typeof(Startup).Assembly,
-                        typeof(Result).Assembly});
-                });
-
             services.AddApplication();
             services.AddInfrastructure(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             configureLocalization(services);
+
+            services
+               .AddIdentity<IdentityUser<long>, IdentityRole<long>>(options =>
+               {
+                   options.SignIn.RequireConfirmedAccount = true;
+                   options.Password.RequireDigit = false;
+                   options.Password.RequireLowercase = false;
+                   options.Password.RequireNonAlphanumeric = false;
+                   options.Password.RequireUppercase = false;
+                   options.Password.RequiredLength = 5;
+
+                   options.Lockout.MaxFailedAccessAttempts = 30;
+               })
+               .AddEntityFrameworkStores<ApplicationDbContext>()
+               .AddDefaultTokenProviders();
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("Users", policy =>
+                {
+                    policy
+                    .RequireAuthenticatedUser()
+                    .RequireRole("user", "admin"); ;
+                });
+
+                options.AddPolicy("Admins", policy =>
+                {
+                    policy
+                    .RequireAuthenticatedUser()
+                    .RequireRole("admin");
+                });
+            });
+
+            services.AddLogging(options =>
+            {
+                options.AddConsole();
+                options.AddEventLog();
+                options.AddDebug();
+            });
+
+            services.AddRazorPages(options =>
+            {
+                options.Conventions.AuthorizePage("/Index", "Users");
+                options.Conventions.AuthorizeFolder("/Rents", "Admins");
+            })
+            .AddFluentValidation(fv =>
+            {
+                fv.LocalizationEnabled = true;
+                fv.RegisterValidatorsFromAssemblies(new[] {
+                    typeof(Startup).Assembly,
+                    typeof(Result).Assembly});
+            });
+
+            services.ConfigureApplicationCookie(options =>
+            {
+                // Cookie settings
+                options.Cookie.Name = "tkn";
+
+                options.Cookie.HttpOnly = true;
+                options.ExpireTimeSpan = TimeSpan.FromDays(1);
+
+                options.LoginPath = "/Identity/Account/Login";
+                options.AccessDeniedPath = "/Identity/Account/AccessDenied";
+                options.SlidingExpiration = true;
+            });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -66,12 +124,15 @@ namespace ELibrary
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapRazorPages();
             });
+
+            initializeApplicationAsync(app).Wait();
         }
 
         private void configureLocalization(IServiceCollection services)
@@ -102,6 +163,60 @@ namespace ELibrary
         {
             var localizationOptions = app.ApplicationServices.GetService<IOptions<RequestLocalizationOptions>>().Value;
             app.UseRequestLocalization(localizationOptions);
+        }
+
+
+        private async Task initializeApplicationAsync(IApplicationBuilder app)
+        {
+            using (var scope = app.ApplicationServices.CreateScope())
+            {
+                var logger = scope.ServiceProvider.GetService<ILogger<ApplicationDbContext>>();
+                var appIdentityDbContext = scope.ServiceProvider.GetService<ApplicationDbContext>();
+                await appIdentityDbContext.Database.MigrateAsync();
+
+                var userManager = scope.ServiceProvider.GetService<UserManager<IdentityUser<long>>>();
+                await createUser(logger, userManager,
+                   userName: "sirajmsaha",
+                   password: "P@ssw0rd2021",
+                   email: "sirajmsaha@gmail.com",
+                   role: "admin");
+
+                await createUser(logger, userManager,
+                  userName: "testuser1",
+                  password: "P@ssw0rd2021",
+                  email: "testuser@test.com",
+                  role: "user");
+            }
+        }
+
+        private static async Task createUser(ILogger<ApplicationDbContext> logger, UserManager<IdentityUser<long>> userManager, string userName, string password, string email, string role)
+        {
+            var user = await userManager.FindByNameAsync(userName);
+            if (user == null)
+            {
+                user = new IdentityUser<long>(userName)
+                {
+                    Email = email,
+                    EmailConfirmed = true,
+                    UserName = userName
+                };
+
+                var result = await userManager.CreateAsync(user, password);
+                if (!result.Succeeded)
+                {
+                    logger.LogInformation($"User {user.UserName} creation failed.");
+                    user = null;
+                }
+            }
+
+            if (user != null)
+            {
+                // add to ADMIN role of not exists in
+                if (!await (userManager.IsInRoleAsync(user, role)))
+                    await userManager.AddToRoleAsync(user, role);
+
+                logger.LogInformation($"({user.UserName}) successfully created.");
+            }
         }
     }
 }

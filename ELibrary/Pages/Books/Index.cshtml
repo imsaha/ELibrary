@@ -1,0 +1,48 @@
+﻿@page
+@model ELibrary.Pages.Books.IndexModel
+@{
+}
+
+
+<h3>Books</h3>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Description</th>
+            <th></th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @if (Model.Books != null)
+        {
+            foreach (var item in Model.Books)
+            {
+                <tr>
+                    <td>
+                        <p style="max-width:200px" class="m-0">
+                            @item.Title
+                        </p>
+                    </td>
+                    <td>
+                        <p class="m-0">@item.Description</p>
+                    </td>
+                    <td>
+                        <a>Edit</a>
+                        |
+                        <a>Delete</a>
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="5">
+                    <p>No book exist.</p>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

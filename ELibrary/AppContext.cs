@@ -17,6 +17,19 @@ namespace ELibrary
             _httpContext = httpContextAccessor?.HttpContext;
         }
 
-        public long OperationCountryId => long.TryParse(_httpContext.Request.Cookies["opc_id"], out long result) ? result : throw new Exception("Operation country is invalid");
+        public long OperationCountryId
+        {
+            get
+            {
+                if (_httpContext.Request.Cookies.Count == 0)
+                    return default;
+
+                var operationIdCookie = _httpContext.Request.Cookies["opc_id"];
+                if (string.IsNullOrEmpty(operationIdCookie))
+                    return default;
+
+                return long.TryParse(operationIdCookie, out long result) ? result : throw new Exception("Operation country is invalid");
+            }
+        }
     }
 }

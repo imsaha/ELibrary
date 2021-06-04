@@ -4,14 +4,16 @@ using ELibrary.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ELibrary.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210604064242_addIdentityTables")]
+    partial class addIdentityTables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -371,16 +373,14 @@ namespace ELibrary.Infrastructure.Migrations
                         new
                         {
                             Id = 1L,
-                            ConcurrencyStamp = "3d04005e-7d68-4e22-aef0-b99749886d59",
-                            Name = "admin",
-                            NormalizedName = "ADMIN"
+                            ConcurrencyStamp = "9e5c1fa2-808a-4dfc-a93a-f98d4a9b1b3d",
+                            Name = "admin"
                         },
                         new
                         {
                             Id = 2L,
-                            ConcurrencyStamp = "f2317df2-a6a8-4fe2-97a1-d21b0a763b35",
-                            Name = "user",
-                            NormalizedName = "USER"
+                            ConcurrencyStamp = "23a9dc98-2da5-4e88-94b3-56ae4d90f8cf",
+                            Name = "user"
                         });
                 });
 
