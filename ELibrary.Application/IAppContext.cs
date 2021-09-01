@@ -10,4 +10,10 @@ namespace ELibrary.Application
     {
         public long OperationCountryId { get; }
     }
+
+    public interface IDataProtectionService
+    {
+        string Protect(string plainText);
+        string UnProtect(string protectedText);
+    }
 }

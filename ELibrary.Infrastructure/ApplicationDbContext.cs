@@ -7,9 +7,9 @@ using System;
 
 namespace ELibrary.Infrastructure
 {
-    public class ApplicationDbContext : IdentityDbContext<IdentityUser<long>, IdentityRole<long>, long>, IDataContext
+    public class ApplicationDbContext :DbContext,  IDataContext
     {
-        public ApplicationDbContext(DbContextOptions options) : base(options)
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
         }
 
@@ -23,12 +23,19 @@ namespace ELibrary.Infrastructure
         public DbSet<OperationCountry> OperationCountries { get; set; }
         public DbSet<CountryBookRentFee> CountryWiseBookRentFees { get; set; }
         public DbSet<SupportedLanguage> SupportedLanguages { get; set; }
+        public DbSet<User> Users { get; set; }
+        public DbSet<Role> Roles { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
             modelBuilder.ApplyConfigurationsFromAssembly(GetType().Assembly);
+
+            modelBuilder.Entity<Role>().HasData(
+                new Role { Id = "user", NormalizedId = "USER" },
+                new Role { Id = "admin", NormalizedId = "ADMIN" });
+
 
             modelBuilder.Entity<OperationCountry>()
                 .HasData(
@@ -175,22 +182,6 @@ namespace ELibrary.Infrastructure
                 {
                     OperationCountryId = 2,
                     SupportedLanaguageId = 2,
-                });
-
-
-            modelBuilder.Entity<IdentityRole<long>>()
-                .HasData(
-                new IdentityRole<long>
-                {
-                    Id = 1,
-                    Name = "admin",
-                    NormalizedName = "ADMIN"
-                },
-                new IdentityRole<long>
-                {
-                    Id = 2,
-                    Name = "user",
-                    NormalizedName = "USER"
                 });
         }
     }

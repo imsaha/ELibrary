@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using FluentValidation.Results;
 using MediatR.Pipeline;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -12,40 +13,36 @@ namespace ELibrary.Application.Behaviors
 {
     internal class RequestValidationPreProcessor<TRequest> : IRequestPreProcessor<TRequest>
     {
+        private readonly IEnumerable<IValidator<TRequest>> _validators;
         private readonly IServiceProvider _serviceProvider;
 
-        public RequestValidationPreProcessor(IServiceProvider serviceProvider)
+        public RequestValidationPreProcessor(IEnumerable<IValidator<TRequest>> validators, IServiceProvider serviceProvider)
         {
+            _validators = validators;
             _serviceProvider = serviceProvider;
         }
-        public Task Process(TRequest request, CancellationToken cancellationToken)
+        public async Task Process(TRequest request, CancellationToken cancellationToken)
         {
             try
             {
-                validateRequest(request);
+               await  validateRequestAsync(request);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                ex.Data.Add("Request", request);
-                throw ex;
+                throw;
             }
-
-            return Task.CompletedTask;
         }
 
-        private void validateRequest(TRequest request)
+        private async Task validateRequestAsync(TRequest request)
         {
-            var validators = typeof(TRequest).Assembly.GetTypes()
-                .Where(x => (typeof(AbstractValidator<TRequest>)).IsAssignableFrom(x))
-                .Select(s => (AbstractValidator<TRequest>)ActivatorUtilities.CreateInstance(_serviceProvider, s))
-                .ToList();
-
+            var failures = new List<ValidationFailure>();
             var context = new ValidationContext<TRequest>(request);
-
-            var failures = validators
-                .Select(v => v.Validate(context))
-                .SelectMany(result => result.Errors)
-                .Where(f => f != null).ToList();
+            foreach (var validator in _validators)
+            {
+                var result = await validator.ValidateAsync(context);
+                if (!result.IsValid)
+                    failures.AddRange(result.Errors);
+            }
 
             if (failures.Count != 0)
                 throw new AppValidationException(failures);

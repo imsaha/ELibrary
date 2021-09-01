@@ -19,5 +19,12 @@ namespace ELibrary
 
             return services;
         }
+
+        public static IServiceCollection AddApplication<TAppContext>(this IServiceCollection services) where TAppContext : IAppContext
+        {
+            services.AddApplication();
+            services.AddTransient(typeof(IAppContext), typeof(TAppContext));
+            return services;
+        }
     }
 }

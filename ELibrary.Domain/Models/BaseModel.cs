@@ -15,4 +15,10 @@ namespace ELibrary.Domain.Models
     {
 
     }
+
+    public interface IModel<T> where T : IEquatable<T>
+    {
+        T Id { get; set; }
+    }
+
 }

@@ -34,7 +34,7 @@ namespace ELibrary.Application.BookManagement.Queries
                         Title = s.Title,
                         Description = s.Description,
                         IsProhibited = s.IsProhibited,
-                        RentFee = s.Fees.First(x => x.OperationCountryId == operationCountryId).RentFee
+                        RentFee = s.Fees.First(x => operationCountryId <= 0 || x.OperationCountryId == operationCountryId).RentFee
                     });
 
                 var result = await query.ToListAsync(cancellationToken);

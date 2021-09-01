@@ -18,7 +18,9 @@ namespace ELibrary.Application
         public DbSet<OperationCountry> OperationCountries { get; }
 
         public DbSet<CountryBookRentFee> CountryWiseBookRentFees { get; }
-        DbSet<SupportedLanguage> SupportedLanguages { get; }
+        public DbSet<SupportedLanguage> SupportedLanguages { get; }
+        public DbSet<User> Users { get; }
+        public DbSet<Role> Roles { get; }
 
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 
