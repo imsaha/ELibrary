@@ -46,5 +46,4 @@ namespace ELibrary.Domain.Models
         public string RoleId { get; set; }
         public Role Role { get; set; }
     }
-
 }

@@ -83,6 +83,11 @@ namespace ELibrary.API
                     .RequireAuthenticatedUser()
                     .AddAuthenticationSchemes("Auth")
                     .Build();
+
+                options.AddPolicy("adminOnly", builder => builder
+                .RequireAuthenticatedUser()
+                .RequireClaim("actingRole", "admin"));
+
             });
 
 

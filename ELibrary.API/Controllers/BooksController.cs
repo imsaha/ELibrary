@@ -2,6 +2,7 @@
 using ELibrary.Application.BookManagement.Dtos;
 using ELibrary.Application.BookManagement.Queries;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -11,6 +12,7 @@ using System.Threading.Tasks;
 
 namespace ELibrary.API.Controllers
 {
+    [Authorize(Policy = "adminOnly")]
     public class BooksController : V1Controller
     {
         public BooksController(IMediator mediator) : base(mediator)
